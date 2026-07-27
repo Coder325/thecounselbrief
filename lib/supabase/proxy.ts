@@ -52,7 +52,7 @@ export async function updateSession(request: NextRequest) {
 
   if (isAuthRoute && user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/protected";
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
