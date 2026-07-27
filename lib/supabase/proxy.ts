@@ -3,10 +3,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  let response = NextResponse.next({
+    request,
+  });
 
   if (!hasEnvVars) {
-    return supabaseResponse;
+    return response;
   }
 
   const supabase = createServerClient(
@@ -18,15 +20,10 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-
-          supabaseResponse = NextResponse.next({ request });
-
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            response.cookies.set(name, value, options);
+          });
         },
       },
     }
@@ -37,13 +34,27 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isDashboardRoute = pathname.startsWith("/dashboard");
 
-  if (isDashboardRoute && !user) {
+  const isProtectedRoute =
+    pathname.startsWith("/protected") ||
+    pathname.startsWith("/dashboard");
+
+  const isAuthRoute =
+    pathname.startsWith("/auth/sign-in") ||
+    pathname.startsWith("/auth/sign-up") ||
+    pathname.startsWith("/auth/forgot-password");
+
+  if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/sign-in";
     return NextResponse.redirect(url);
   }
 
-  return supabaseResponse;
+  if (isAuthRoute && user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/protected";
+    return NextResponse.redirect(url);
+  }
+
+  return response;
 }
