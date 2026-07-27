@@ -65,22 +65,24 @@ async function signUp(formData: FormData) {
   redirect("/auth/sign-in?message=account_created");
 }
 
-export default function SignInPage({
+export default async function SignInPage({
   searchParams,
 }: {
-  searchParams?: { error?: string; message?: string };
+  searchParams: Promise<{ error?: string; message?: string }>;
 }) {
+  const params = await searchParams;
+
   const errorMessage =
-    searchParams?.error === "invalid_credentials"
+    params.error === "invalid_credentials"
       ? "Invalid email or password."
-      : searchParams?.error === "no_user"
+      : params.error === "no_user"
       ? "Could not load your user session."
-      : searchParams?.error === "signup_failed"
+      : params.error === "signup_failed"
       ? "Could not create account."
       : null;
 
   const successMessage =
-    searchParams?.message === "account_created"
+    params.message === "account_created"
       ? "Account created. You can sign in now."
       : null;
 
