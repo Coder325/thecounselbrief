@@ -6,7 +6,7 @@ import Navbar from "@/components/navbar";
 export const metadata: Metadata = {
   title: "The Counsel Brief",
   description: "Sharp legal analysis, case updates, and policy commentary.",
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL("https://thecounselbrief.vercel.app"),
   openGraph: {
     title: "The Counsel Brief",
     description: "Sharp legal analysis, case updates, and policy commentary.",
