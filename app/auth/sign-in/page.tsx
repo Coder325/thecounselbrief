@@ -15,7 +15,7 @@ async function signIn(formData: FormData) {
   });
 
   if (error) {
-    redirect("/auth/sign-in?error=invalid_credentials");
+    redirect("/auth/sign-in");
   }
 
   const {
@@ -23,7 +23,7 @@ async function signIn(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/auth/sign-in?error=no_user");
+    redirect("/auth/sign-in");
   }
 
   const { data: profile } = await supabase
@@ -59,33 +59,13 @@ async function signUp(formData: FormData) {
   });
 
   if (error) {
-    redirect("/auth/sign-in?error=signup_failed");
+    redirect("/auth/sign-in");
   }
 
-  redirect("/auth/sign-in?message=account_created");
+  redirect("/auth/sign-in");
 }
 
-export default async function SignInPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string; message?: string }>;
-}) {
-  const params = await searchParams;
-
-  const errorMessage =
-    params.error === "invalid_credentials"
-      ? "Invalid email or password."
-      : params.error === "no_user"
-      ? "Could not load your user session."
-      : params.error === "signup_failed"
-      ? "Could not create account."
-      : null;
-
-  const successMessage =
-    params.message === "account_created"
-      ? "Account created. You can sign in now."
-      : null;
-
+export default function SignInPage() {
   return (
     <main className="mx-auto max-w-md px-6 py-10">
       <h1 className="text-3xl font-semibold text-stone-950">Sign in</h1>
@@ -96,18 +76,6 @@ export default async function SignInPage({
       <div className="mt-8 grid gap-8">
         <section className="rounded-2xl border border-stone-200 bg-white p-6">
           <h2 className="text-lg font-semibold text-stone-950">Sign in</h2>
-
-          {errorMessage && (
-            <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {errorMessage}
-            </p>
-          )}
-
-          {successMessage && (
-            <p className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-              {successMessage}
-            </p>
-          )}
 
           <form action={signIn} className="mt-5 space-y-5">
             <div>
