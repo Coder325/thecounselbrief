@@ -8,16 +8,29 @@ type Article = {
   excerpt: string | null;
   category: string | null;
   created_at: string;
+  status: string;
+  published: boolean;
 };
 
 export default async function HomeContent() {
   const supabase = await createClient();
 
-  const { data: articles } = await supabase
+  const { data: articles, error } = await supabase
     .from("articles")
-    .select("id, title, slug, excerpt, category, created_at")
+    .select("id, title, slug, excerpt, category, created_at, status, published")
     .eq("published", true)
+    .eq("status", "published")
     .order("created_at", { ascending: false });
+
+  if (error) {
+    return (
+      <main className="mx-auto max-w-5xl px-6 py-10">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
+          <p className="text-sm text-red-700">Home query error: {error.message}</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-10">
