@@ -37,7 +37,7 @@ export default function UnauthorizedPage() {
           </Link>
 
           <Link
-            href="/articles"
+            href="/"
             className="inline-flex items-center justify-center rounded-full border border-stone-300 px-5 py-3 text-sm font-medium text-stone-800 transition hover:border-red-300 hover:text-red-700"
           >
             Read articles
