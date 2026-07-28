@@ -17,9 +17,7 @@ export default function SubscribeForm() {
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
@@ -32,7 +30,7 @@ export default function SubscribeForm() {
       }
 
       setStatus("success");
-      setMessage("You’re subscribed to The Counsel Brief.");
+      setMessage("You’re subscribed.");
       setEmail("");
     } catch {
       setStatus("error");
@@ -48,6 +46,7 @@ export default function SubscribeForm() {
 
       <input
         id="email"
+        name="email"
         type="email"
         required
         value={email}
@@ -65,11 +64,7 @@ export default function SubscribeForm() {
       </button>
 
       {message && (
-        <p
-          className={`text-sm ${
-            status === "success" ? "text-green-700" : "text-red-700"
-          }`}
-        >
+        <p className={`text-sm ${status === "success" ? "text-green-700" : "text-red-700"}`}>
           {message}
         </p>
       )}
