@@ -18,25 +18,7 @@ async function signIn(formData: FormData) {
     redirect("/auth/sign-in");
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/auth/sign-in");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (profile && ["admin", "editor"].includes(profile.role)) {
-    redirect("/dashboard");
-  }
-
-  redirect("/unauthorized");
+  redirect("/dashboard");
 }
 
 async function signUp(formData: FormData) {
@@ -52,6 +34,7 @@ async function signUp(formData: FormData) {
     email,
     password,
     options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
       data: {
         full_name: fullName,
       },
