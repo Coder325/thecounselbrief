@@ -5,18 +5,13 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignInForm() {
-  const supabase = createClient();
   const router = useRouter();
-
+  const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
-  const [message, setMessage] = useState("");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("loading");
-    setMessage("");
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -24,56 +19,50 @@ export default function SignInForm() {
     });
 
     if (error) {
-      setStatus("error");
-      setMessage(error.message);
+      alert(error.message);
       return;
     }
 
+    router.push("/dashboard");
     router.refresh();
-    router.push("/");
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="mt-5 space-y-5">
       <div>
-        <label htmlFor="sign-in-email" className="block text-sm font-medium text-stone-700">
+        <label htmlFor="signin-email" className="block text-sm font-medium text-stone-700">
           Email
         </label>
         <input
-          id="sign-in-email"
+          id="signin-email"
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-red-500"
-          placeholder="you@example.com"
+          className="mt-2 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm"
         />
       </div>
 
       <div>
-        <label htmlFor="sign-in-password" className="block text-sm font-medium text-stone-700">
+        <label htmlFor="signin-password" className="block text-sm font-medium text-stone-700">
           Password
         </label>
         <input
-          id="sign-in-password"
+          id="signin-password"
           type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-red-500"
-          placeholder="Your password"
+          className="mt-2 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm"
         />
       </div>
 
       <button
         type="submit"
-        disabled={status === "loading"}
-        className="inline-flex w-full items-center justify-center rounded-xl bg-stone-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center rounded-full bg-stone-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700"
       >
-        {status === "loading" ? "Signing in..." : "Sign in"}
+        Sign in
       </button>
-
-      {message && <p className="text-sm text-red-700">{message}</p>}
     </form>
   );
 }
